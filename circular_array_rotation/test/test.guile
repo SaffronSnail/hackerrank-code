@@ -1,0 +1,52 @@
+#! guile \
+-e main -s
+!#
+
+(use-modules (srfi srfi-1))
+
+(define (num-list->string-aux lst ret)
+	(if (null? (drop lst 1))
+		(string-append ret (number->string (first lst)))
+		(let ((new-ret (string-append ret (number->string (first lst)) " ")))
+			(num-list->string-aux (drop lst 1) new-ret)
+		)
+	)
+)
+
+(define (num-list->string lst)
+	(num-list->string-aux lst "")
+)
+
+(define (make-sequential-list-aux num-elems ret)
+	(if (< num-elems 0)
+		ret
+		(let ((new-ret (cons num-elems ret)))
+			(make-sequential-list-aux (- num-elems 1) new-ret)
+		)
+	)
+)
+
+(define (make-sequential-list num-elems)
+	(make-sequential-list-aux num-elems '())
+)
+
+; create a list of numbers which should be fed into standard input
+; when testing the algorithm
+(define (make-input num-elems num-rotations)
+	(append
+		(list num-elems num-rotations num-elems)
+		(make-sequential-list num-elems)
+		(make-sequential-list num-elems)
+	)
+)
+
+(define (run-test-case)
+	(let ((input (make-input (random 10) (random 50))))
+		(display (num-list->string input))
+	)
+)
+
+(define (main args)
+	(run-test-case)
+)
+
