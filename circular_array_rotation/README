@@ -1,4 +1,4 @@
-The specification for this problem can be found at https://www.hackerrank.com/challenges/circular-array-rotation?h_r=internal-search
+The specification for this problem can be found at https://www.hackerrank.com/challenges/circular-array-rotation
 
 I first created a brute-force method to see if that would work, but sure enough it timed out. Now I'm working on simply calculating the correct spot for each element based on the number of rotations, which has prevented the timeout, but I'm now failing some tests on Hackerrank. In order to find the problem, right now I'm writing a guile script that will create random input and compare the result of the brute-force method to the calculated method. Hopefully if I run this for a while I'll find some good input (ie input that makes the calculated version fail).
 
