@@ -4,14 +4,15 @@
 
 (use-modules (srfi srfi-1))
 
+(set! *random-state* (seed->random-state (cdr (gettimeofday))))
+
 (define (num-list->string-aux lst ret)
 	(if (null? (drop lst 1))
 		(string-append ret (number->string (first lst)))
 		(let ((new-ret (string-append ret (number->string (first lst)) " ")))
 			(num-list->string-aux (drop lst 1) new-ret)
 		)
-	)
-)
+	))
 
 (define (num-list->string lst)
 	(num-list->string-aux lst "")
@@ -26,8 +27,7 @@
 	)
 )
 
-(define (make-sequential-list num-elems)
-	(make-sequential-list-aux num-elems '())
+(define (make-sequential-list num-elems) (make-sequential-list-aux num-elems '())
 )
 
 ; create a list of numbers which should be fed into standard input
@@ -35,14 +35,30 @@
 (define (make-input num-elems num-rotations)
 	(append
 		(list num-elems num-rotations num-elems)
-		(make-sequential-list num-elems)
-		(make-sequential-list num-elems)
+		(make-sequential-list (- num-elems 1))
+		(make-sequential-list (- num-elems 1))
 	)
 )
 
 (define (run-test-case)
-	(let ((input (make-input (random 10) (random 50))))
-		(display (num-list->string input))
+	(let ((input (make-input (+ 5 (random 10)) (+ 5 (random 50))))
+	      (data-file (open-file "test/data.txt" "w"))
+			 )
+		(simple-format data-file (num-list->string input))
+		(close data-file)
+
+		(display "input:") (newline)
+		(display input) (newline)
+
+		(system "make build/brute-debug")
+		(system "make build/calculate-debug")
+
+		(display "Brute result:") (newline)
+		(system "build/brute-debug < test/data.txt > test/brute.txt")
+		(system "cat test/brute.txt")
+		(display "Calculated result:") (newline)
+		(system "build/calculate-debug < test/data.txt > test/calculate.txt")
+		(system "cat test/calculate.txt")
 	)
 )
 
