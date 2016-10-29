@@ -1,16 +1,7 @@
-#include <stdlib.h>
 #include <stdio.h>
 
 #include "main.h"
 #include "shared.h"
-
-Array make_array(int size)
-{
-	Array ret;
-	ret.data = (int *)malloc(sizeof(int) * size);
-	ret.size = size;
-	return ret;
-}
 
 int main()
 {
