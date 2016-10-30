@@ -1,5 +1,5 @@
-FLAGS=-Wall -Wextra -Werror
-DEBUG_FLAGS=-g
+FLAGS=-Wall -Wextra -Werror -std=c11
+DEBUG_FLAGS=-g -DPRINTF_TRACE
 
 # TEST COMMANDS
 test-brute: build/brute data/data.txt
@@ -7,6 +7,12 @@ test-brute: build/brute data/data.txt
 
 test-calculate: build/calculate data/data.txt
 	time ./build/calculate < data/data.txt
+
+test-brute-debug: build/brute-debug data/data.txt
+	./build/brute-debug < data/data.txt
+
+test-calculate-debug: build/calculate-debug data/data.txt
+	./build/calculate-debug < data/data.txt
 
 # EXECUTABLE COMMANDS
 build/brute: build/main.o build/brute.o build/shared.o
@@ -28,7 +34,7 @@ build/brute.o: src/brute.c src/shared.h
 build/calculate.o: src/calculate.c src/shared.h
 	cc $(FLAGS) src/calculate.c -c -o build/calculate.o
 
-build/main.o: src/main.c src/shared.h src/main.h
+build/main.o: src/main.c src/shared.h
 	cc $(FLAGS) src/main.c -c -o build/main.o
 
 build/shared.o: src/shared.c src/shared.h
@@ -40,7 +46,11 @@ build/brute-debug.o: src/brute.c src/shared.h
 build/calculate-debug.o: src/calculate.c src/shared.h
 	cc $(FLAGS) $(DEBUG_FLAGS) src/calculate.c -c -o build/calculate-debug.o
 
+<<<<<<< HEAD
 build/main-debug.o: src/main.c src/shared.h src/main.h
+=======
+build/main-debug.o: src/main.c src/shared.h
+>>>>>>> cc8609231c61b9e31de9fb0c60b56b974f7fb07a
 	cc $(FLAGS) $(DEBUG_FLAGS) src/main.c -c -o build/main-debug.o
 
 build/shared-debug.o: src/shared.c src/shared.h
