@@ -1,7 +1,7 @@
 (def shift? >)
 
 (defn count-shifts [container current-node-value index-to-check & {:keys [num-shifts]
-                                                                   :or   [num-shifts 0]
+                                                                   :or   {num-shifts 0}
                                                                   }
                    ]
   (let [check-value (nth container index-to-check nil)]
@@ -17,7 +17,8 @@
 
 (defn perform-single-test [container & {:keys [current-node num-shifts]
                                         :or   {current-node 0
-                                               num-shifts   0}
+                                               num-shifts   0
+                                              }
                                        }
                           ]
   (let [current-node-val (nth container current-node nil)]
@@ -43,7 +44,7 @@
   ; document; if there is a line the content indicates how many
   ; elements are in the array, which is irrelevant to this algorithm
   (when (not (nil? (read-line)))
-    (perform-single-test (map read-string (.split (read-line) " ")))
+    (println (perform-single-test (map read-string (.split (read-line) " "))))
     (perform-all-tests)
   )
 )
@@ -54,5 +55,5 @@
   (perform-all-tests)
 )
 
-(perform-single-test (list 1 2 3 4))
+(main)
 
