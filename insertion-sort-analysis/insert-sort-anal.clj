@@ -1,9 +1,10 @@
 (def shift? >)
 
-(defn count-shifts [container current-node-value index-to-check :keys [num-shifts]
-                                                                :or   [num-shifts 0]
+(defn count-shifts [container current-node-value index-to-check & {:keys [num-shifts]
+                                                                   :or   [num-shifts 0]
+                                                                  }
                    ]
-  (let [check-value (get container index-to-check)
+  (let [check-value (nth container index-to-check nil)]
     (if (nil? check-value)
       num-shifts
       (if (shift? current-node-value check-value)
@@ -14,11 +15,12 @@
   )
 )
 
-(defn perform-single-test [container :keys [current-node num-shifts]
-                                     :or   [current-node 0
-                                            num-shifts   0]
+(defn perform-single-test [container & {:keys [current-node num-shifts]
+                                        :or   {current-node 0
+                                               num-shifts   0}
+                                       }
                           ]
-  (let [current-node-val (get container current-node)]
+  (let [current-node-val (nth container current-node nil)]
     (if (nil? current-node-val)
       num-shifts
       (let [next-node (+ 1 current-node)]
@@ -52,5 +54,5 @@
   (perform-all-tests)
 )
 
-(main)
+(perform-single-test (list 1 2 3 4))
 
