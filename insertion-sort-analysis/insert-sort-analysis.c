@@ -1,45 +1,45 @@
 #include <stdio.h>
+#include <string.h>
 
-static int max_array_size = 100 * 1000;
+#define MAX_ARRAY_SIZE 100 * 1000
+#define MAX_VALUE      10  * 1000 * 1000
 
-int count_shifts(int *array, int count, int index_to_check)
+static int array[MAX_ARRAY_SIZE];
+static int count;
+static int tallies[MAX_VALUE];
+
+void read_args()
 {
-	int ret = 0;
-	for (int i = index_to_check + 1; i < count; ++i)
-		if (array[index_to_check] > array[i])
-			++ret;
-	return ret;
+	scanf("%d", &count);
+	for (int i = 0; i < count; ++i)
+		scanf("%d", array + i);
 }
 
-int perform_single_test(int *array, int count)
+int count_all_shifts(int *array, int count)
 {
-	int ret = 0;
-	for (int i = 0; i < count - 1; ++i)
-		ret += count_shifts(array, count, i);
-	return ret;
-}
+	int shifts = 0;
 
-void perform_all_tests(int num_tests)
-{
-	int array[max_array_size];
-	int current_array_size;
+	read_args();
 
-	for (int i = 0; i < num_tests; ++i)
+	for (int i = 0; i < count; ++i)
 	{
-		scanf("%d", &current_array_size);
-
-		for (int i = 0; i < current_array_size; ++i)
-			scanf("%d", array + i);
-
-		printf("%d\n", perform_single_test(array, current_array_size));
+		for (int j = array[i] - 1; j >= 0; --j)
+			shifts += tallies[j];
+		++tallies[array[i]];
 	}
+
+	memset(tallies, 0, count);
+	return shifts;
 }
 
 int main(void)
 {
+	memset(tallies, 0, MAX_VALUE);
+
 	int num_tests;
 	scanf("%d", &num_tests);
-	perform_all_tests(num_tests);
+	for (int i = 0; i < num_tests; ++i)
+		printf("%d\n", count_all_shifts(array, count));
 	return 0;
 }
 
