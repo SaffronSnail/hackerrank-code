@@ -24,20 +24,20 @@ static HeapNode heap[HEAP_LENGTH_DEF];
 static HeapNodePtr head;
 
 // CONSTANTS
-static const int HEAP_LENGTH = HEAP_LENGTH_DEF;
+static const unsigned HEAP_LENGTH = HEAP_LENGTH_DEF;
 #undef HEAP_LENGTH_DEF
 
 static const Data  EMPTY_NODE_VALUE = INT_MIN;
 static const HeapNodePtr NULL_NODE = (unsigned)-1;
 
 // HEAP INTERFACE DECLARATIONS
-static inline void delete(Data data);
-static inline Data get_min();
-static inline void init();
-static inline void insert(Data data);
+static inline HeapNodePtr new_node();
+static inline void        delete(Data data);
+static inline Data        get_min();
+static inline void        init();
+static inline void        insert(Data data);
 
 // HEAPNODE INTERFACE DELCARATIONS
-static inline void init_node(HeapNodePtr this, Data data);
 static inline void delete_heap_node(HeapNodePtr this);
 static inline bool node_exists(HeapNodePtr this);
 
@@ -91,7 +91,6 @@ int main(void) {
 // HEAP INTERFACE DEFINITIONS
 void delete(Data data)
 {
-#error TODO: implement delete funciton
 }
 
 Data get_min()
@@ -102,13 +101,23 @@ Data get_min()
 void init()
 {
   head = 0;
-  for (HeapNodePtr i = 0; heap[i].data < HEAP_LENGTH; ++i)
+  for (HeapNodePtr i = 0; i < HEAP_LENGTH; ++i)
     heap[i].data = EMPTY_NODE_VALUE;
 }
 
 void insert(Data data)
 {
   insert_aux(data, head, NULL_NODE);
+}
+
+HeapNodePtr new_node()
+{
+  for (unsigned index = 0; index < HEAP_LENGTH; ++index)
+    if(!node_exists(index))
+      return index;
+
+  fprintf(stderr, "Cannot allocate a new node! All are in use!");
+  return NULL_NODE;
 }
 
 // HEAPNODE INTERFACE DEFINITIONS
@@ -125,15 +134,6 @@ void delete_heap_node(HeapNodePtr this)
 void increment_height(HeapNodePtr this)
 {
   heap[this].height += 1;
-}
-
-void init_node(HeapNodePtr this, Data data)
-{
-  set_data(this, data);
-  set_height(this, 0);
-  set_left(this, NULL_NODE);
-  set_right(this, NULL_NODE);
-  set_parent(this, NULL_NODE);
 }
 
 Data get_data(HeapNodePtr this)
@@ -182,8 +182,7 @@ void set_left(HeapNodePtr this, HeapNodePtr left)
 }
 
 void set_parent(HeapNodePtr this, HeapNodePtr parent)
-{
-  heap[this].parent = parent;
+{ heap[this].parent = parent;
 }
 
 void set_right(HeapNodePtr this, HeapNodePtr right)
@@ -195,17 +194,23 @@ void set_right(HeapNodePtr this, HeapNodePtr right)
 void insert_aux(Data data, HeapNodePtr node, HeapNodePtr parent)
 {
   if(!node_exists(node))
-    init_node(node, data);
+  {
+    set_data(node, data);
+    set_height(node, 0);
+    set_left(node, NULL_NODE);
+    set_parent(node, parent);
+    set_right(node, NULL_NODE);
+  }
   else if (heap[node].data > data)
     replace_node(data, node);
   else
   {
     increment_height(node);
 
-    HeapNodePtr left_node = left(node);
-    HeapNodePtr right_node = right(node);
+    HeapNodePtr left_node = get_left(node);
+    HeapNodePtr right_node = get_right(node);
 
-    if (height_of(left_node) < height_of(right_node))
+    if (get_height(left_node) < get_height(right_node))
       insert_aux(data, left_node, node);
     else
       insert_aux(data, right_node, node);
@@ -221,14 +226,22 @@ void replace_node(Data data, HeapNodePtr target)
 {
   HeapNodePtr parent = heap[target].parent;
 
-  HeapNodePtr new_node = new_heap_node();
-  init_heap_node(new_node, data, parent);
+  //set up the new node
+  HeapNodePtr node = new_node();
+  set_data(node, data);
+  set_height(node, get_height(node) + 1);
+  set_left(node, target);
+  set_parent(node, parent);
+  set_right(node, NULL_NODE);
 
-  if (heap[parent].left == new_node)
-    heap[parent].left = new_node;
+  // update the replaced node
+  set_parent(target, node);
+
+  // update the replaced node's parent
+  if (heap[parent].left == node)
+    heap[parent].left = node;
   else
-    heap[parent].right = new_node;
+    heap[parent].right = node;
 
-# error TODO: finish implementing replace_node
 }
 
