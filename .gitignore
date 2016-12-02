@@ -2,3 +2,7 @@
 /.*
 *.*.swp
 *.out
+
+# this is the name I use for output of tests
+*/actual.txt 
+
