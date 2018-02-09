@@ -3,6 +3,9 @@
 *.*.swp
 *.out
 
+# emacs backup files
+*#*
+
 # this is the name I use for output of tests
-*/actual.txt 
+**/actual.txt 
 
